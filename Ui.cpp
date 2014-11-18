@@ -198,8 +198,10 @@ void SubstitutionEditor::displayContextMenu(const QPoint& point)
     assert(m_contextMenuSelectedItem);
 
     QMenu menu(this);
-    QAction *action = menu.addAction("&Delete");
-    connect(action, SIGNAL(triggered(bool)), SLOT(deleteSubstitution(bool)));
+    QAction *deleteAction = menu.addAction("&Delete");
+    connect(deleteAction, SIGNAL(triggered(bool)), SLOT(deleteSubstitution(bool)));
+    QAction *editAction = menu.addAction("&Edit");
+    connect(editAction, SIGNAL(triggered(bool)), SLOT(editSubstitution(bool)));
 
     menu.exec(m_widgets.tvSubstitutions->viewport()->mapToGlobal(point));
 }
@@ -209,6 +211,20 @@ void SubstitutionEditor::deleteSubstitution(bool)
     assert(model());
     assert(model()->substitutionManager());
     assert(m_contextMenuSelectedItem);
+    model()->substitutionManager()->remove(m_contextMenuSelectedItem);
+    m_contextMenuSelectedItem = nullptr;
+    model()->update();
+}
+
+void SubstitutionEditor::editSubstitution(bool)
+{
+    assert(model());
+    assert(model()->substitutionManager());
+    assert(m_contextMenuSelectedItem);
+    m_widgets.leSearchText->setText(QString::fromStdString(
+        m_contextMenuSelectedItem->regexpPattern));
+    m_widgets.leReplacement->setText(QString::fromStdString(
+        m_contextMenuSelectedItem->replacement));
     model()->substitutionManager()->remove(m_contextMenuSelectedItem);
     m_contextMenuSelectedItem = nullptr;
     model()->update();

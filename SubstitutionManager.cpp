@@ -134,14 +134,13 @@ void SubstitutionManager::applyToString(const char* in, char* out, uint outLen) 
             if (idx >= groups.size())
                 break;
 
-            const auto& replace = groups[idx];
-            for (size_t pos = 0; ; pos += replace.length()) 
+            size_t pos = 0;
+            std::string search = markerGroups[0];
+            std::string replace = groups[idx];
+            while((pos = processed.find(search, pos)) != std::string::npos) 
             {
-                pos = processed.find(markerGroups[0], pos);
-                if (pos == std::string::npos) 
-                    break;
-                processed.erase(pos, markerGroups[0].length());
-                processed.insert(pos, replace);
+                processed.replace(pos, search.length(), replace);
+                pos += replace.length();
             }
         }
         ::qstrncpy(out, processed.c_str(), outLen);

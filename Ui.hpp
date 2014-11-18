@@ -77,6 +77,7 @@ protected slots:
     void addSubstitution(bool); // any idea how ofen I wrote "substitution" today? goddamit.
     void displayContextMenu(const QPoint& point);
     void deleteSubstitution(bool);
+    void editSubstitution(bool);
 };
 
 // ============================================================================================= //
