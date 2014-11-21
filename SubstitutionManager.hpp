@@ -58,13 +58,13 @@ public:
     ~SubstitutionManager();
 public:
     void add(const std::shared_ptr<Substitution> subst);
-    void remove(const Substitution *subst);
+    void remove(const Substitution* subst);
     const SubstitutionList& substitutions() const { return m_substs; }
 protected:
     void loadFromSettings();
     void saveToSettings() const;
 public:
-    void applyToString(const char *in, char *out, uint outLen) const;
+    void applyToString(char* str, uint outLen) const;
 };
 
 // ============================================================================================= //

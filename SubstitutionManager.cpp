@@ -53,7 +53,7 @@ void SubstitutionManager::add(const std::shared_ptr<Substitution> subst)
     saveToSettings();
 }
 
-void SubstitutionManager::remove(const Substitution *subst)
+void SubstitutionManager::remove(const Substitution* subst)
 {
     for (auto it = m_substs.begin(), end = m_substs.end(); it != end; ++it)
     {
@@ -117,33 +117,33 @@ void SubstitutionManager::saveToSettings() const
     settings.endGroup();
 }
 
-void SubstitutionManager::applyToString(const char* in, char* out, uint outLen) const
+void SubstitutionManager::applyToString(char* str, uint outLen) const
 {
     for (auto it = m_substs.cbegin(), end = m_substs.cend(); it != end; ++it)
     {
         std::cmatch groups;
-        if (!std::regex_match(in, groups, (*it)->regexp))
-            continue;
-        
-        auto processed = (*it)->replacement;
-        std::smatch markerGroups;
-        while (std::regex_search(processed, markerGroups, m_kMarkerFinder))
+        while (std::regex_match(str, groups, (*it)->regexp))
         {
-            assert(markerGroups.size() == 2);
-            auto idx = static_cast<unsigned int>(std::stoi(markerGroups[1]));
-            if (idx >= groups.size())
-                break;
-
-            size_t pos = 0;
-            std::string search = markerGroups[0];
-            std::string replace = groups[idx];
-            while((pos = processed.find(search, pos)) != std::string::npos) 
+            auto processed = (*it)->replacement;
+            std::smatch markerGroups;
+            while (std::regex_search(processed, markerGroups, m_kMarkerFinder))
             {
-                processed.replace(pos, search.length(), replace);
-                pos += replace.length();
+                assert(markerGroups.size() == 2);
+                auto idx = static_cast<unsigned int>(std::stoi(markerGroups[1]));
+                if (idx >= groups.size())
+                    break;
+
+                size_t pos = 0;
+                std::string search = markerGroups[0];
+                std::string replace = groups[idx];
+                while((pos = processed.find(search, pos)) != std::string::npos) 
+                {
+                    processed.replace(pos, search.length(), replace);
+                    pos += replace.length();
+                }
             }
+            ::qstrncpy(str, processed.c_str(), outLen);
         }
-        ::qstrncpy(out, processed.c_str(), outLen);
     }
 }
 

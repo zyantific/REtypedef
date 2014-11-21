@@ -87,7 +87,7 @@ int32 Core::demanglerHookCallback(char* answer, uint answerLength,
     //msg("str: %s; ret: 0x%08X\n", str, ret);
 
     if (answer && answerLength != 0)
-        thiz.m_substitutionManager.applyToString(answer, answer, answerLength);
+        thiz.m_substitutionManager.applyToString(answer, answerLength);
 
     return ret;
 }

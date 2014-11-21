@@ -208,6 +208,13 @@ void SubstitutionEditor::displayContextMenu(const QPoint& point)
 
 void SubstitutionEditor::deleteSubstitution(bool)
 {
+    if (QMessageBox::question(qApp->activeWindow(), PLUGIN_NAME, 
+        "Are you sure your want to delete this entry?", QMessageBox::Yes | QMessageBox::No) 
+            != QMessageBox::Yes)
+    {
+        return;
+    }
+
     assert(model());
     assert(model()->substitutionManager());
     assert(m_contextMenuSelectedItem);
