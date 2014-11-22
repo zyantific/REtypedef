@@ -31,6 +31,10 @@ if (NOT DEFINED ida_sdk)
     set(ida_sdk $ENV{IDASDK})
 endif ()
 
+if (!WIN32)
+    message(SEND_ERROR "Sorry, currently only Win32 platform is supported.")
+endif ()
+
 if (NOT CONFIGURED_ONCE)
     # Compiler specific switches
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU" OR
@@ -146,7 +150,8 @@ set(project_headers
     Settings.hpp
     Utils.hpp
     Ui.hpp
-    SubstitutionManager.hpp)
+    SubstitutionManager.hpp
+    ImportExport.hpp)
 set(project_sources 
     Core.cpp
     InlineDetour.cpp
@@ -154,7 +159,8 @@ set(project_sources
     Settings.cpp
     Utils.cpp
     Ui.cpp
-    SubstitutionManager.cpp)
+    SubstitutionManager.cpp
+    ImportExport.cpp)
 set(project_forms
     ui/SubstitutionEditor.ui)
 #set(project_resources )

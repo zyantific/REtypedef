@@ -30,9 +30,9 @@
 #include <QMessageBox>
 #include <QMenu>
 
-// ============================================================================================= //
-// [SubstitutionModel]                                                                           //
-// ============================================================================================= //
+// ============================================================================================== //
+// [SubstitutionModel]                                                                            //
+// ============================================================================================== //
 
 SubstitutionModel::SubstitutionModel(SubstitutionManager *data, QObject *parent)
     : QAbstractItemModel(parent)
@@ -43,7 +43,7 @@ SubstitutionModel::SubstitutionModel(SubstitutionManager *data, QObject *parent)
 
 int SubstitutionModel::rowCount(const QModelIndex &parent) const
 {
-    return m_substMgr->substitutions().size();
+    return m_substMgr->rules().size();
 }
 
 int SubstitutionModel::columnCount(const QModelIndex &/*parent*/) const
@@ -62,7 +62,7 @@ QVariant SubstitutionModel::data(const QModelIndex &index, int role) const
         return QVariant();
 
     assert(index.row() >= m_substMgr->substitutions().size());
-    auto sbst = m_substMgr->substitutions().at(index.row());
+    auto sbst = m_substMgr->rules().at(index.row());
     return index.column() == 0 ? QString::fromStdString(sbst->regexpPattern)
         : QString::fromStdString(sbst->replacement);
 }
@@ -98,7 +98,7 @@ const Substitution* SubstitutionModel::substitutionByIndex(const QModelIndex& in
 {
     assert(m_substMgr);
     assert(m_substMgr->substitutions().size() > index.row());
-    return m_substMgr->substitutions().at(index.row()).get();
+    return m_substMgr->rules().at(index.row()).get();
 }
 
 void SubstitutionModel::update()
@@ -107,9 +107,9 @@ void SubstitutionModel::update()
     emit layoutChanged();
 }
 
-// ============================================================================================= //
-// [SubstitutionEditor]                                                                          //
-// ============================================================================================= //
+// ============================================================================================== //
+// [SubstitutionEditor]                                                                           //
+// ============================================================================================== //
 
 SubstitutionEditor::SubstitutionEditor(QWidget* parent)
     : QDialog(parent)
@@ -149,7 +149,7 @@ void SubstitutionEditor::addSubstitution(bool)
     }
 
     // Unique?
-    const auto& substs = model()->substitutionManager()->substitutions();
+    const auto& substs = model()->substitutionManager()->rules();
     auto it = std::find_if(substs.cbegin(), substs.cend(), 
         [&regexp](const std::shared_ptr<Substitution>& cur) -> bool
     {
@@ -164,10 +164,10 @@ void SubstitutionEditor::addSubstitution(bool)
     }
 
     // Valid?
-    auto newSbst = std::make_shared<Substitution>();
+    auto newSubst = std::make_shared<Substitution>();
     try
     {
-        newSbst->regexp = std::regex(regexp, std::regex_constants::optimize);
+        newSubst->regexp = std::regex(regexp, std::regex_constants::optimize);
     }
     catch (const std::regex_error& e)
     {
@@ -176,13 +176,13 @@ void SubstitutionEditor::addSubstitution(bool)
         return;
     }
     
-    newSbst->replacement = m_widgets.leReplacement->text().toStdString();
-    newSbst->regexpPattern = regexp;
+    newSubst->replacement = m_widgets.leReplacement->text().toStdString();
+    newSubst->regexpPattern = regexp;
 
     // Sane, add to list.
     m_widgets.leSearchText->clear();
     m_widgets.leReplacement->clear();
-    model()->substitutionManager()->add(std::move(newSbst));
+    model()->substitutionManager()->addRule(std::move(newSubst));
     model()->update();
 }
 
@@ -218,7 +218,7 @@ void SubstitutionEditor::deleteSubstitution(bool)
     assert(model());
     assert(model()->substitutionManager());
     assert(m_contextMenuSelectedItem);
-    model()->substitutionManager()->remove(m_contextMenuSelectedItem);
+    model()->substitutionManager()->removeRule(m_contextMenuSelectedItem);
     m_contextMenuSelectedItem = nullptr;
     model()->update();
 }
@@ -232,9 +232,9 @@ void SubstitutionEditor::editSubstitution(bool)
         m_contextMenuSelectedItem->regexpPattern));
     m_widgets.leReplacement->setText(QString::fromStdString(
         m_contextMenuSelectedItem->replacement));
-    model()->substitutionManager()->remove(m_contextMenuSelectedItem);
+    model()->substitutionManager()->removeRule(m_contextMenuSelectedItem);
     m_contextMenuSelectedItem = nullptr;
     model()->update();
 }
 
-// ============================================================================================= //
+// ============================================================================================== //

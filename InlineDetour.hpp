@@ -34,9 +34,9 @@
 
 #include <udis86.h>
 
-// ============================================================================================= //
-// [InlineDetour]                                                                                //
-// ============================================================================================= //
+// ============================================================================================== //
+// [InlineDetour]                                                                                 //
+// ============================================================================================== //
 
 template<typename Function>
 class InlineDetour : public Utils::NonCopyable
@@ -62,7 +62,7 @@ private:
 // Implementation of inline methods [InlineDetour]                                               //
 // ============================================================================================= //
 
-template<typename Function>
+template<typename Function> inline
 InlineDetour<Function>::InlineDetour(Function* target, Function* callback)
     : m_target(target)
     , m_callback(callback)
@@ -73,7 +73,7 @@ InlineDetour<Function>::InlineDetour(Function* target, Function* callback)
     assert(callback);
 }
 
-template<typename Function>
+template<typename Function> inline
 void InlineDetour<Function>::attach(Function*& trampoline)
 {
     // Already attached?
@@ -87,7 +87,7 @@ void InlineDetour<Function>::attach(Function*& trampoline)
             reinterpret_cast<uint8_t*>(m_target), 5, 128 /* TODO */);
 
         // Allocate trampoline and backup original code
-        m_trampoline = VirtualAlloc(NULL, m_detourLen + 5, MEM_COMMIT | MEM_RESERVE, 
+        m_trampoline = VirtualAlloc(nullptr, m_detourLen + 5, MEM_COMMIT | MEM_RESERVE, 
             PAGE_EXECUTE_READWRITE);
         if (!m_trampoline)
             throw Error("cannot allocate RWX memory");
@@ -126,7 +126,7 @@ void InlineDetour<Function>::attach(Function*& trampoline)
     }
 }
 
-template<typename Function>
+template<typename Function> inline
 void InlineDetour<Function>::detach()
 {
     if (!m_trampoline)
@@ -148,7 +148,7 @@ void InlineDetour<Function>::detach()
     m_detourLen = 0;
 }
 
-template<typename Function>
+template<typename Function> inline
 size_t InlineDetour<Function>::calculateTrampolineLength(
     uint8_t* target, size_t minLen, size_t maxLen)
 {

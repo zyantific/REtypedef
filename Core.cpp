@@ -27,6 +27,7 @@
 #include "Config.hpp"
 #include "Settings.hpp"
 #include "Ui.hpp"
+#include "ImportExport.hpp"
 
 #include <QDir>
 #include <QApplication>
@@ -36,9 +37,9 @@
 #include <kernwin.hpp>
 #include <loader.hpp>
 
-// ============================================================================================= //
-// [Core]                                                                                        //
-// ============================================================================================= //
+// =============================================================================================== //
+// [Core]                                                                                          //
+// =============================================================================================== //
 
 Core::Core()
     : m_originalMangler(nullptr)
@@ -46,11 +47,27 @@ Core::Core()
     add_menu_item("Options", "Edit name substitutions...", nullptr, 0, 
         &Core::onOptionsMenuItemClicked, this);
 
+    // Load rules from settings and subscribe to changes in the manager
+    try
+    {
+        SettingsImporter importer(&m_substitutionManager);
+        importer.importRules();
+    }
+    catch (const SettingsImporter::Error& e)
+    {
+        msg("[" PLUGIN_NAME "] Cannot load settings: %s\n", e.what());
+    }
+    connect(&m_substitutionManager, SIGNAL(entryAdded()), SLOT(saveToSettings()));
+    connect(&m_substitutionManager, SIGNAL(entryDeleted()), SLOT(saveToSettings()));
+
     // Place demangler detour
     HMODULE hIdaWll = GetModuleHandleA("IDA.WLL");
     if (!hIdaWll)
         throw std::runtime_error("cannot find IDA.WLL");
+
     auto demangle = reinterpret_cast<demangler_t*>(GetProcAddress(hIdaWll, "demangle"));
+    if (!demangle)
+        throw std::runtime_error("cannot find exported function \"demangle\" in IDA.WLL");
 
     m_demanglerDetour.reset(new DemanglerDetour(demangle, &Core::demanglerHookCallback));
     m_demanglerDetour->attach(m_originalMangler);
@@ -81,7 +98,7 @@ void Core::runPlugin()
 int32 Core::demanglerHookCallback(char* answer, uint answerLength, 
     const char* str, uint32 disableMask)
 {
-    auto &thiz = Core::instance();
+    auto &thiz = instance();
     auto ret = thiz.m_originalMangler(answer, answerLength, str, disableMask);
 
     //msg("str: %s; ret: 0x%08X\n", str, ret);
@@ -102,4 +119,17 @@ bool Core::onOptionsMenuItemClicked(void* userData)
     return 0;
 }
 
-// ============================================================================================= //
+void Core::saveToSettings()
+{
+    try
+    {
+        SettingsExporter exporter(&m_substitutionManager);
+        exporter.exportRules();
+    }
+    catch (const SettingsExporter::Error &e)
+    {
+        msg("[" PLUGIN_NAME "] Cannot save to settings: %s\n", e.what());
+    }
+}
+
+// ============================================================================================== //

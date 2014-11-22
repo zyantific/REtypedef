@@ -34,9 +34,9 @@
 #include <demangle.hpp>
 #include <memory>
 
-// ============================================================================================= //
-// [Core]                                                                                        //
-// ============================================================================================= //
+// ============================================================================================== //
+// [Core]                                                                                         //
+// ============================================================================================== //
 
 /**
  * @brief   Plugin core singleton.
@@ -62,12 +62,30 @@ public:
      * @brief   Runs the plugin.
      */
     void runPlugin();
-    
+    /**
+     * @brief   Replacement function for IDA's @c demangle routine.
+     * @param   answer          The output buffer for the demangled name.
+     * @param   answerLength    Length of @c answer bufer.
+     * @param   str             The mangled name.
+     * @param   disableMask     See @c demangle.hpp in IDA SDK.
+     * @return  See @c demangle.hpp in IDA SDK.
+     */
     static int32 idaapi demanglerHookCallback(char* answer, uint answerLength, 
         const char* str, uint32 disableMask);
+private:
+    /**
+     * @brief   Handles clicks on the "Edit name substitutions" menu entry in IDA.
+     * @param   userData    @c this.
+     * @return  Always 0.
+     */
     static bool idaapi onOptionsMenuItemClicked(void* userData);
+private slots:
+    /**
+     * @brief   Saves the rules from the substitution manager to the settings.
+     */
+    void saveToSettings();
 };
 
-// ============================================================================================= //
+// ============================================================================================== //
 
 #endif

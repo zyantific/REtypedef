@@ -30,10 +30,11 @@
 #include <QDialog>
 #include <regex>
 #include <vector>
+#include <QObject>
 
-// ============================================================================================= //
-// [Substitution]                                                                                //
-// ============================================================================================= //
+// ============================================================================================== //
+// [Substitution]                                                                                 //
+// ============================================================================================== //
 
 struct Substitution
 {
@@ -42,31 +43,34 @@ struct Substitution
     std::string replacement;
 };
 
-// ============================================================================================= //
-// [SubstitutionManager]                                                                         //
-// ============================================================================================= //
+// ============================================================================================== //
+// [SubstitutionManager]                                                                          //
+// ============================================================================================== //
 
-class SubstitutionManager : public Utils::NonCopyable
+class SubstitutionManager : public QObject, public Utils::NonCopyable
 {
+    Q_OBJECT
+
 public:
     typedef std::vector<std::shared_ptr<Substitution>> SubstitutionList;
 protected:
     static const std::regex m_kMarkerFinder;
-    SubstitutionList m_substs;
+    SubstitutionList m_rules;
 public:
     SubstitutionManager();
     ~SubstitutionManager();
 public:
-    void add(const std::shared_ptr<Substitution> subst);
-    void remove(const Substitution* subst);
-    const SubstitutionList& substitutions() const { return m_substs; }
-protected:
-    void loadFromSettings();
-    void saveToSettings() const;
+    void addRule(const std::shared_ptr<Substitution> subst);
+    void removeRule(const Substitution* subst);
+    void clearRules();
+    const SubstitutionList& rules() const { return m_rules; }
 public:
     void applyToString(char* str, uint outLen) const;
+signals:
+    void entryAdded();
+    void entryDeleted();
 };
 
-// ============================================================================================= //
+// ============================================================================================== //
 
 #endif // SUBSTITUTIONMANAGER_HPP

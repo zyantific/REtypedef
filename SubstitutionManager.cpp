@@ -30,96 +30,49 @@
 #include <kernwin.hpp>
 #include <idp.hpp>
 
-// ============================================================================================= //
-// [SubstitutionManager]                                                                         //
-// ============================================================================================= //
+// ============================================================================================== //
+// [SubstitutionManager]                                                                          //
+// ============================================================================================== //
 
 const std::regex SubstitutionManager::m_kMarkerFinder 
     = std::regex("\\$(\\d+)", std::regex_constants::optimize);
 
 SubstitutionManager::SubstitutionManager()
 {
-    loadFromSettings();
+    
 }
 
 SubstitutionManager::~SubstitutionManager()
 {
-    //saveToSettings();
+    
 }
 
-void SubstitutionManager::add(const std::shared_ptr<Substitution> subst)
+void SubstitutionManager::addRule(const std::shared_ptr<Substitution> subst)
 {
-    m_substs.push_back(std::move(subst));
-    saveToSettings();
+    m_rules.push_back(std::move(subst));
 }
 
-void SubstitutionManager::remove(const Substitution* subst)
+void SubstitutionManager::removeRule(const Substitution* subst)
 {
-    for (auto it = m_substs.begin(), end = m_substs.end(); it != end; ++it)
+    for (auto it = m_rules.begin(), end = m_rules.end(); it != end; ++it)
     {
         if (it->get() == subst)
         {
-            it = m_substs.erase(it);
-            if (it == m_substs.end())
+            it = m_rules.erase(it);
+            if (it == m_rules.end())
                 break;
         }
     }
 }
 
-void SubstitutionManager::loadFromSettings()
+void SubstitutionManager::clearRules()
 {
-    m_substs.clear();
-
-    Settings settings;
-    settings.beginGroup(settings.kSubstitutionGroup);
-    int size = settings.beginReadArray(settings.kSubstitutionPrefix);
-    for (int i = 0; i < size; ++i)
-    {
-        settings.setArrayIndex(i);
-        auto raw = settings.value(settings.kSubstitutionPrefix).toStringList();
-        if (raw.size() == 2)
-        {
-            auto sbst = std::make_shared<Substitution>();
-            sbst->replacement = raw.at(1).toAscii().data();
-            sbst->regexpPattern = raw.at(0).toAscii().data();
-
-            try
-            {
-                sbst->regexp = std::regex(sbst->regexpPattern, std::regex_constants::optimize);
-            }
-            catch (const std::regex_error &/*e*/) 
-            {
-                continue;
-            }
-            
-            m_substs.push_back(std::move(sbst));
-        }
-    }
-    settings.endArray();
-    settings.endGroup();
-}
-
-void SubstitutionManager::saveToSettings() const
-{
-    Settings settings;
-    settings.beginGroup(settings.kSubstitutionGroup);
-    settings.beginWriteArray(settings.kSubstitutionPrefix, m_substs.size());
-    int i = 0;
-    for (auto it = m_substs.cbegin(), end = m_substs.cend(); it != end; ++it, ++i)
-    {
-        settings.setArrayIndex(i);
-        QStringList slist;
-        slist.append(QString::fromStdString((*it)->regexpPattern));
-        slist.append(QString::fromStdString((*it)->replacement));
-        settings.setValue(settings.kSubstitutionPrefix, slist);
-    }
-    settings.endArray();
-    settings.endGroup();
+    m_rules.clear();
 }
 
 void SubstitutionManager::applyToString(char* str, uint outLen) const
 {
-    for (auto it = m_substs.cbegin(), end = m_substs.cend(); it != end; ++it)
+    for (auto it = m_rules.cbegin(), end = m_rules.cend(); it != end; ++it)
     {
         std::cmatch groups;
         while (std::regex_match(str, groups, (*it)->regexp))
@@ -147,4 +100,4 @@ void SubstitutionManager::applyToString(char* str, uint outLen) const
     }
 }
 
-// ============================================================================================= //
+// ============================================================================================== //
