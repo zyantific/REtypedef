@@ -68,7 +68,7 @@ class SubstitutionEditor : public QDialog
     Ui::SubstitutionEditor m_widgets;
     const Substitution* m_contextMenuSelectedItem;
 public:
-    SubstitutionEditor(QWidget* parent=nullptr);
+    explicit SubstitutionEditor(QWidget* parent=nullptr);
     virtual ~SubstitutionEditor() {}
 public:
     void setModel(SubstitutionModel* model);
@@ -78,6 +78,8 @@ protected slots:
     void displayContextMenu(const QPoint& point);
     void deleteSubstitution(bool);
     void editSubstitution(bool);
+    void importRules(bool);
+    void exportRules(bool);
 };
 
 // ============================================================================================== //

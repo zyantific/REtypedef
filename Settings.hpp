@@ -42,7 +42,8 @@ public:
 public:
     // Constants.
     static const QString kSubstitutionGroup;
-    static const QString kSubstitutionPrefix;
+    static const QString kSubstitutionPattern;
+    static const QString kSubstitutionReplacement;
 };
 
 // ============================================================================================== //

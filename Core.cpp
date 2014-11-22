@@ -50,10 +50,11 @@ Core::Core()
     // Load rules from settings and subscribe to changes in the manager
     try
     {
-        SettingsImporter importer(&m_substitutionManager);
+        Settings settings;
+        SettingsImporterExporter importer(&m_substitutionManager, &settings);
         importer.importRules();
     }
-    catch (const SettingsImporter::Error& e)
+    catch (const SettingsImporterExporter::Error& e)
     {
         msg("[" PLUGIN_NAME "] Cannot load settings: %s\n", e.what());
     }
@@ -115,6 +116,7 @@ bool Core::onOptionsMenuItemClicked(void* userData)
     SubstitutionModel model(&thiz->m_substitutionManager);
     SubstitutionEditor editor(qApp->activeWindow());
     editor.setModel(&model);
+
     editor.exec();
     return 0;
 }
@@ -123,10 +125,11 @@ void Core::saveToSettings()
 {
     try
     {
-        SettingsExporter exporter(&m_substitutionManager);
+        Settings settings;
+        SettingsImporterExporter exporter(&m_substitutionManager, &settings);
         exporter.exportRules();
     }
-    catch (const SettingsExporter::Error &e)
+    catch (const SettingsImporterExporter::Error &e)
     {
         msg("[" PLUGIN_NAME "] Cannot save to settings: %s\n", e.what());
     }

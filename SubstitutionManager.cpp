@@ -50,6 +50,7 @@ SubstitutionManager::~SubstitutionManager()
 void SubstitutionManager::addRule(const std::shared_ptr<Substitution> subst)
 {
     m_rules.push_back(std::move(subst));
+    emit entryAdded();
 }
 
 void SubstitutionManager::removeRule(const Substitution* subst)
@@ -59,6 +60,7 @@ void SubstitutionManager::removeRule(const Substitution* subst)
         if (it->get() == subst)
         {
             it = m_rules.erase(it);
+            emit entryDeleted();
             if (it == m_rules.end())
                 break;
         }
@@ -67,7 +69,11 @@ void SubstitutionManager::removeRule(const Substitution* subst)
 
 void SubstitutionManager::clearRules()
 {
-    m_rules.clear();
+    if (m_rules.size())
+    {
+        m_rules.clear();
+        emit entryDeleted();
+    }
 }
 
 void SubstitutionManager::applyToString(char* str, uint outLen) const

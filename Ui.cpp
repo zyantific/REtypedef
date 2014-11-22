@@ -25,10 +25,13 @@
 #include "Ui.hpp"
 
 #include "Config.hpp"
+#include "ImportExport.hpp"
 
 #include <cassert>
 #include <QMessageBox>
 #include <QMenu>
+#include <QFileDialog>
+#include <QSettings>
 
 // ============================================================================================== //
 // [SubstitutionModel]                                                                            //
@@ -120,6 +123,9 @@ SubstitutionEditor::SubstitutionEditor(QWidget* parent)
         SIGNAL(customContextMenuRequested(const QPoint&)),
         SLOT(displayContextMenu(const QPoint&)));
     connect(m_widgets.btnAdd, SIGNAL(clicked(bool)), SLOT(addSubstitution(bool)));
+    connect(m_widgets.btnImport, SIGNAL(clicked(bool)), SLOT(importRules(bool)));
+    connect(m_widgets.btnExport, SIGNAL(clicked(bool)), SLOT(exportRules(bool)));
+
     m_widgets.tvSubstitutions->setContextMenuPolicy(Qt::CustomContextMenu);
 }
 
@@ -221,6 +227,34 @@ void SubstitutionEditor::deleteSubstitution(bool)
     model()->substitutionManager()->removeRule(m_contextMenuSelectedItem);
     m_contextMenuSelectedItem = nullptr;
     model()->update();
+}
+
+void SubstitutionEditor::importRules(bool)
+{
+    auto fileName = QFileDialog::getOpenFileName(qApp->activeWindow(), "Import rules...", 
+        QString(), "Rule file (*.ini)");
+
+    if (fileName.isEmpty())
+        return;
+
+    QSettings settings(fileName, QSettings::IniFormat);
+    SettingsImporterExporter importer(model()->substitutionManager(), &settings);
+    importer.importRules();
+
+    model()->update();
+}
+
+void SubstitutionEditor::exportRules(bool)
+{
+    auto fileName = QFileDialog::getSaveFileName(qApp->activeWindow(), "Export rules...", 
+        QString(), "Rule file (*.ini)");
+
+    if (fileName.isEmpty())
+        return;
+
+    QSettings settings(fileName, QSettings::IniFormat);
+    SettingsImporterExporter exporter(model()->substitutionManager(), &settings);
+    exporter.exportRules();
 }
 
 void SubstitutionEditor::editSubstitution(bool)

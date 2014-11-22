@@ -22,27 +22,34 @@
  * THE SOFTWARE.
  */
 
-#include "Settings.hpp"
+#ifndef IMPORTEXPORT_HPP
+#define IMPORTEXPORT_HPP
 
-#include "Config.hpp"
+#include "Utils.hpp"
+
+#include <stdexcept>
+#include <QSettings>
+
+class SubstitutionManager;
 
 // ============================================================================================== //
-// [Settings]                                                                                     //
+// [SettingsImporterExporter]                                                                     //
 // ============================================================================================== //
 
-const QString Settings::kSubstitutionGroup = "substitutions";
-const QString Settings::kSubstitutionPattern = "pattern";
-const QString Settings::kSubstitutionReplacement = "repl";
-
-Settings::Settings()
-    : QSettings("athre0z", PLUGIN_NAME)
+class SettingsImporterExporter : public Utils::NonCopyable
 {
-
-}
-
-Settings::~Settings()
-{
-
-}
+    QSettings* m_settings;
+    SubstitutionManager* m_manager;
+public:
+    class Error : public std::runtime_error
+        { public: explicit Error(const char *error) : runtime_error(error) {} };
+public:
+    explicit SettingsImporterExporter(SubstitutionManager* manager, QSettings* settings);
+    virtual ~SettingsImporterExporter() {}
+    void importRules() const;
+    void exportRules() const;
+};
 
 // ============================================================================================== //
+
+#endif // IMPORTEXPORT_HPP
