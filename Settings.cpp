@@ -33,6 +33,7 @@
 const QString Settings::kSubstitutionGroup = "substitutions";
 const QString Settings::kSubstitutionPattern = "pattern";
 const QString Settings::kSubstitutionReplacement = "repl";
+const QString Settings::kFirstStart = "firstStart";
 
 Settings::Settings()
     : QSettings("athre0z", PLUGIN_NAME)
@@ -46,3 +47,4 @@ Settings::~Settings()
 }
 
 // ============================================================================================== //
+// 

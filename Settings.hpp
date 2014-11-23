@@ -44,6 +44,7 @@ public:
     static const QString kSubstitutionGroup;
     static const QString kSubstitutionPattern;
     static const QString kSubstitutionReplacement;
+    static const QString kFirstStart;
 };
 
 // ============================================================================================== //

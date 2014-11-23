@@ -163,14 +163,14 @@ set(project_sources
     ImportExport.cpp)
 set(project_forms
     ui/SubstitutionEditor.ui)
-#set(project_resources )
+set(project_resources resources/rsrc.qrc)
 
 # Qt
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 find_package(Qt4 REQUIRED QtCore QtGui)
 QT4_WRAP_UI(project_forms_headers ${project_forms})
-#QT4_ADD_RESOURCES(project_resources_rcc ${project_resources})
+QT4_ADD_RESOURCES(project_resources_rcc ${project_resources})
 
 # Hack Qt to use release libraries even when generating debug binaries
 # for compatibility with IDA.
@@ -207,8 +207,8 @@ include_directories("${ida_sdk}/include")
 add_library(${CMAKE_PROJECT_NAME} SHARED
     ${project_headers}
     ${project_sources}
-    ${project_forms_headers})
-#    ${project_resources_rcc})
+    ${project_forms_headers}
+    ${project_resources_rcc})
 set_target_properties(${CMAKE_PROJECT_NAME} PROPERTIES
     PREFIX ""
     SUFFIX "${plugin_extension}"

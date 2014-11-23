@@ -47,10 +47,19 @@ Core::Core()
     add_menu_item("Options", "Edit name substitutions...", nullptr, 0, 
         &Core::onOptionsMenuItemClicked, this);
 
+    // First start? Initialize with default rules.
+    Settings settings;
+    if (settings.value(Settings::kFirstStart, true).toBool())
+    {
+        QSettings defaultRules(":/Misc/default_rules.ini", QSettings::IniFormat);
+        SettingsImporterExporter importer(&m_substitutionManager, &defaultRules);
+        importer.importRules();
+        settings.setValue(Settings::kFirstStart, false);
+    }
+
     // Load rules from settings and subscribe to changes in the manager
     try
     {
-        Settings settings;
         SettingsImporterExporter importer(&m_substitutionManager, &settings);
         importer.importRules();
     }

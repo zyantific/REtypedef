@@ -204,9 +204,9 @@ void SubstitutionEditor::displayContextMenu(const QPoint& point)
     assert(m_contextMenuSelectedItem);
 
     QMenu menu(this);
-    QAction *deleteAction = menu.addAction("&Delete");
+    QAction *deleteAction = menu.addAction(QIcon(":/SubstitutionEditor/delete.png"), "&Delete");
     connect(deleteAction, SIGNAL(triggered(bool)), SLOT(deleteSubstitution(bool)));
-    QAction *editAction = menu.addAction("&Edit");
+    QAction *editAction = menu.addAction(QIcon(":/SubstitutionEditor/edit.png"), "&Edit");
     connect(editAction, SIGNAL(triggered(bool)), SLOT(editSubstitution(bool)));
 
     menu.exec(m_widgets.tvSubstitutions->viewport()->mapToGlobal(point));

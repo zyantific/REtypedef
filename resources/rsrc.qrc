@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="SubstitutionEditor">
+    <file>delete.png</file>
+    <file>edit.png</file>
+  </qresource>
+  <qresource prefix="Misc">
+    <file>default_rules.ini</file>
+  </qresource>
+</RCC>
