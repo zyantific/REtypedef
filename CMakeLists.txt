@@ -162,7 +162,8 @@ set(project_sources
     SubstitutionManager.cpp
     ImportExport.cpp)
 set(project_forms
-    ui/SubstitutionEditor.ui)
+    ui/SubstitutionEditor.ui
+    ui/AboutDialog.ui)
 set(project_resources resources/rsrc.qrc)
 
 # Qt

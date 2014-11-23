@@ -4,6 +4,7 @@
     <file>edit.png</file>
   </qresource>
   <qresource prefix="Misc">
+    <file>udis_license.txt</file>
     <file>default_rules.ini</file>
   </qresource>
 </RCC>

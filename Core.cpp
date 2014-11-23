@@ -103,7 +103,7 @@ Core::~Core()
 
 void Core::runPlugin()
 {
-
+    AboutDialog().exec();
 }
 
 int32 Core::demanglerHookCallback(char* answer, uint answerLength, 

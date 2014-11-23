@@ -29,6 +29,7 @@
 
 #include <cassert>
 #include <QMessageBox>
+#include <QFile>
 #include <QMenu>
 #include <QFileDialog>
 #include <QSettings>
@@ -64,7 +65,7 @@ QVariant SubstitutionModel::data(const QModelIndex &index, int role) const
     if (!index.isValid() || role != Qt::DisplayRole)
         return QVariant();
 
-    assert(index.row() >= m_substMgr->substitutions().size());
+    assert(static_cast<unsigned>(index.row()) >= m_substMgr->rules().size());
     auto sbst = m_substMgr->rules().at(index.row());
     return index.column() == 0 ? QString::fromStdString(sbst->regexpPattern)
         : QString::fromStdString(sbst->replacement);
@@ -100,7 +101,7 @@ Qt::ItemFlags SubstitutionModel::flags(const QModelIndex &index) const
 const Substitution* SubstitutionModel::substitutionByIndex(const QModelIndex& index)
 {
     assert(m_substMgr);
-    assert(m_substMgr->substitutions().size() > index.row());
+    assert(m_substMgr->rules().size() > static_cast<unsigned>(index.row()));
     return m_substMgr->rules().at(index.row()).get();
 }
 
@@ -269,6 +270,27 @@ void SubstitutionEditor::editSubstitution(bool)
     model()->substitutionManager()->removeRule(m_contextMenuSelectedItem);
     m_contextMenuSelectedItem = nullptr;
     model()->update();
+}
+
+// ============================================================================================== //
+// [AboutDialog]                                                                                  //
+// ============================================================================================== //
+
+AboutDialog::AboutDialog()
+{
+    m_widgets.setupUi(this);
+
+    connect(m_widgets.lblUdis, 
+        SIGNAL(linkActivated(const QString&)), 
+        SLOT(displayUdisLicense(const QString&)));
+}
+
+void AboutDialog::displayUdisLicense(const QString& /*link*/)
+{
+    QFile licenseFile(":/Misc/udis_license.txt");
+    licenseFile.open(QFile::ReadOnly);
+    QMessageBox::information(qApp->activeWindow(), "udis86 license", 
+        QString::fromAscii(licenseFile.readAll()));
 }
 
 // ============================================================================================== //

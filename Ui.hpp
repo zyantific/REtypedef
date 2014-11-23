@@ -26,6 +26,7 @@
 #define UI_HPP
 
 #include "ui_SubstitutionEditor.h"
+#include "ui_AboutDialog.h"
 #include "SubstitutionManager.hpp"
 
 #include <QDialog>
@@ -80,6 +81,22 @@ protected slots:
     void editSubstitution(bool);
     void importRules(bool);
     void exportRules(bool);
+};
+
+// ============================================================================================== //
+// [AboutDialog]                                                                                  //
+// ============================================================================================== //
+
+class AboutDialog : public QDialog
+{
+    Q_OBJECT
+
+    Ui::AboutDialog m_widgets;
+public:
+    AboutDialog();
+    virtual ~AboutDialog() {}
+private slots:
+    void displayUdisLicense(const QString& /*link*/);
 };
 
 // ============================================================================================== //

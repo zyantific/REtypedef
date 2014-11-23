@@ -80,7 +80,7 @@ plugin_t PLUGIN =
     &run,
     "Reverse typedef resolution",
     "Reverse typedef resolution plugin.",
-    PLUGIN_NAME ": Settings",
+    PLUGIN_NAME ": About",
     "Ctrl-Shift-S"
 };
 
