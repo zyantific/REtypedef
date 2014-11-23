@@ -54,6 +54,7 @@ Core::Core()
         QSettings defaultRules(":/Misc/default_rules.ini", QSettings::IniFormat);
         SettingsImporterExporter importer(&m_substitutionManager, &defaultRules);
         importer.importRules();
+        saveToSettings();
         settings.setValue(Settings::kFirstStart, false);
     }
 
@@ -137,6 +138,8 @@ void Core::saveToSettings()
         Settings settings;
         SettingsImporterExporter exporter(&m_substitutionManager, &settings);
         exporter.exportRules();
+
+        request_refresh(IWID_NAMES | IWID_DISASMS);
     }
     catch (const SettingsImporterExporter::Error &e)
     {
