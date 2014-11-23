@@ -33,8 +33,8 @@ REtypedef is an IDA PRO plugin that allows defining custom substitutions for fun
 ```
 
 ### With REtypedef
-```
-`.text:0040142E ; =============== S U B R O U T I N E =======================================
+```asm
+.text:0040142E ; =============== S U B R O U T I N E =======================================
 .text:0040142E
 .text:0040142E ; Attributes: thunk
 .text:0040142E
