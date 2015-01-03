@@ -28,13 +28,13 @@
 #include "Settings.hpp"
 #include "Ui.hpp"
 #include "ImportExport.hpp"
+#include "RETypedef.hpp"
 
 #include <QDir>
 #include <QApplication>
 #include <QMessageBox>
 #include <idp.hpp>
 #include <diskio.hpp>
-#include <kernwin.hpp>
 #include <loader.hpp>
 
 // =============================================================================================== //
@@ -44,8 +44,22 @@
 Core::Core()
     : m_originalMangler(nullptr)
 {
-    add_menu_item("Options", "Edit name substitutions...", nullptr, 0, 
+#if IDA_SDK_VERSION >= 670
+    action_desc_t action = 
+    {
+        sizeof(action),
+        "retypedef_open_name_subst_editor",
+        "Edit name substitutions...",
+        &m_optionsMenuItemClickedAction,
+        &PLUGIN
+    };
+
+    register_action(action);
+    attach_action_to_menu("Options/", "retypedef_open_name_subst_editor", 0);
+#else
+    add_menu_item("Options/", "Edit name substitutions...", nullptr, 0, 
         &Core::onOptionsMenuItemClicked, this);
+#endif
 
     // First start? Initialize with default rules.
     Settings settings;
@@ -98,8 +112,26 @@ Core::~Core()
         std::terminate();
     }
 
+#if IDA_SDK_VERSION >= 670
+    detach_action_from_menu("Options/", "retypedef_open_name_subst_editor");
+    unregister_action("retypedef_open_name_subst_editor");
+#else
     del_menu_item("Options/Edit name substitutions...");
+#endif
 }
+
+#if IDA_SDK_VERSION >= 670
+int Core::OptionsMenuItemClickedAction::activate(action_activation_ctx_t * /*ctx*/)
+{
+    onOptionsMenuItemClicked(&Core::instance());
+    return 1;
+}
+
+action_state_t Core::OptionsMenuItemClickedAction::update(action_update_ctx_t * /*ctx*/)
+{
+    return AST_ENABLE_ALWAYS;
+}
+#endif
 
 void Core::runPlugin()
 {

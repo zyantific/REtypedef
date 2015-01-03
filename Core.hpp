@@ -33,6 +33,7 @@
 #include <ida.hpp>
 #include <demangle.hpp>
 #include <memory>
+#include <kernwin.hpp>
 
 // ============================================================================================== //
 // [Core]                                                                                         //
@@ -73,6 +74,13 @@ public:
     static int32 idaapi demanglerHookCallback(char* answer, uint answerLength, 
         const char* str, uint32 disableMask);
 private:
+#if IDA_SDK_VERSION >= 670
+    struct OptionsMenuItemClickedAction : public action_handler_t
+    {
+        int idaapi activate(action_activation_ctx_t *ctx);
+        action_state_t idaapi update(action_update_ctx_t *ctx);
+    } m_optionsMenuItemClickedAction;
+#endif
     /**
      * @brief   Handles clicks on the "Edit name substitutions" menu entry in IDA.
      * @param   userData    @c this.

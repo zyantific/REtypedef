@@ -151,7 +151,8 @@ set(project_headers
     Utils.hpp
     Ui.hpp
     SubstitutionManager.hpp
-    ImportExport.hpp)
+    ImportExport.hpp
+    REtypedef.hpp)
 set(project_sources 
     Core.cpp
     InlineDetour.cpp

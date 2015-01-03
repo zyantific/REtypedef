@@ -24,10 +24,10 @@
 
 #include "Config.hpp"
 #include "Core.hpp"
+#include "RETypedef.hpp"
 
 #include <ida.hpp>
 #include <idp.hpp>
-#include <loader.hpp>
 
 
 // ============================================================================================== //
@@ -80,8 +80,7 @@ plugin_t PLUGIN =
     &run,
     "Reverse typedef resolution",
     "Reverse typedef resolution plugin.",
-    PLUGIN_NAME ": About",
-    "Ctrl-Shift-S"
+    PLUGIN_NAME ": About"
 };
 
 // ============================================================================================== //

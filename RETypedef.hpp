@@ -22,13 +22,11 @@
  * THE SOFTWARE.
  */
 
-#ifndef CONFIG_HPP
-#define CONFIG_HPP
+#ifndef RETYPEDEF_HPP
+#define RETYPEDEF_HPP
 
-#define MAKE_PLUGIN_VERSION(maj, min, rev)  ((maj << 16) | (min << 8) | rev)
-#define PLUGIN_TEXTUAL_VERSION  "v1.0.2"
-#define PLUGIN_VERSION          MAKE_PLUGIN_VERSION(1, 0, 2)
+#include <loader.hpp>
 
-#define PLUGIN_NAME             "REtypedef"
+extern plugin_t PLUGIN;
 
-#endif
+#endif // RETYPEDEF_HPP
