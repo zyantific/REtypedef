@@ -45,7 +45,7 @@ Core::Core()
     : m_originalMangler(nullptr)
 {
 #if IDA_SDK_VERSION >= 670
-    action_desc_t action = 
+    static const action_desc_t action = 
     {
         sizeof(action),
         "retypedef_open_name_subst_editor",
@@ -86,7 +86,11 @@ Core::Core()
     connect(&m_substitutionManager, SIGNAL(entryDeleted()), SLOT(saveToSettings()));
 
     // Place demangler detour
+#ifdef __EA64__
+    HMODULE hIdaWll = GetModuleHandleA("IDA64.WLL");
+#else
     HMODULE hIdaWll = GetModuleHandleA("IDA.WLL");
+#endif
     if (!hIdaWll)
         throw std::runtime_error("cannot find IDA.WLL");
 
