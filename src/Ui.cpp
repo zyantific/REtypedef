@@ -279,18 +279,6 @@ void SubstitutionEditor::editSubstitution(bool)
 AboutDialog::AboutDialog()
 {
     m_widgets.setupUi(this);
-
-    connect(m_widgets.lblUdis, 
-        SIGNAL(linkActivated(const QString&)), 
-        SLOT(displayUdisLicense(const QString&)));
-}
-
-void AboutDialog::displayUdisLicense(const QString& /*link*/)
-{
-    QFile licenseFile(":/Misc/udis_license.txt");
-    licenseFile.open(QFile::ReadOnly);
-    QMessageBox::information(qApp->activeWindow(), "udis86 license", 
-        QString::fromAscii(licenseFile.readAll()));
 }
 
 // ============================================================================================== //

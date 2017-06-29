@@ -32,7 +32,7 @@
 #include <cassert>
 #include <Windows.h>
 
-#include <udis86.h>
+#include <Zydis/Zydis.h>
 
 // ============================================================================================== //
 // [InlineDetour]                                                                                 //
@@ -55,7 +55,7 @@ public:
     void attach(Function*& trampoline);
     void detach();
 private:
-    size_t calculateTrampolineLength(uint8_t* target, size_t minLen, size_t maxLen);
+    static size_t calculateTrampolineLength(uint8_t* target, size_t minLen, size_t maxLen);
 };
 
 // ============================================================================================= //
@@ -152,13 +152,25 @@ template<typename Function> inline
 size_t InlineDetour<Function>::calculateTrampolineLength(
     uint8_t* target, size_t minLen, size_t maxLen)
 {
-    ud_t disas;
-    ud_init(&disas);
-    ud_set_input_buffer(&disas, target, maxLen);
-    ud_set_mode(&disas, 32);
+    ZydisInstructionDecoder decoder;
+    ZydisDecoderInitInstructionDecoder(
+        &decoder,
+        ZYDIS_MACHINE_MODE_LEGACY_32,
+        ZYDIS_ADDRESS_WIDTH_INVALID
+    );
 
-    while (ud_insn_off(&disas) < minLen && ud_disassemble(&disas));
-    return ud_insn_off(&disas);
+    ZydisInstructionInfo nfo;
+    ZydisStatus status;
+    size_t offs = 0;
+    do
+    {
+        status = ZydisDecoderDecodeBuffer(
+            &decoder, target + offs, maxLen - offs, 0, &nfo
+        );
+        offs += nfo.length;
+    } while (status != ZYDIS_STATUS_NO_MORE_DATA && offs < minLen);
+
+    return offs;
 }
 
 // ============================================================================================= //

@@ -30,6 +30,7 @@
 #include <QDialog>
 #include <regex>
 #include <vector>
+#include <memory>
 #include <QObject>
 
 // ============================================================================================== //

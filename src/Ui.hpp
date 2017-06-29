@@ -95,8 +95,6 @@ class AboutDialog : public QDialog
 public:
     AboutDialog();
     virtual ~AboutDialog() {}
-private slots:
-    void displayUdisLicense(const QString& /*link*/);
 };
 
 // ============================================================================================== //
